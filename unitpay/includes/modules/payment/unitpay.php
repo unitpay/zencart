@@ -45,6 +45,7 @@ class unitpay {
 	function after_process() {
 
 		global $insert_id, $cart, $order, $currencies;
+		$domain = MODULE_PAYMENT_UNITPAY_DOMAIN;
 		$public_key = MODULE_PAYMENT_UNITPAY_PUBLIC_KEY;
 		$currency_value = $order->info['currency_value'];
 		$rate = (zen_not_null($currency_value)) ? $currency_value : 1;
@@ -53,7 +54,7 @@ class unitpay {
 		$account = $insert_id;
 		$desc = 'Заказ №' . $insert_id;
 		$currency = $order->info['currency'];
-		$payment_url = 'https://unitpay.ru/pay/' . $public_key . '?' . 'sum=' . $sum . '&account=' . $account . '&desc=' . $desc . '&currency=' . $currency;
+		$payment_url = 'https://' . $domain . '/pay/' . $public_key . '?' . 'sum=' . $sum . '&account=' . $account . '&desc=' . $desc . '&currency=' . $currency;
 		$_SESSION['cart']->reset(true);
 
 		unset($_SESSION['sendto']);
@@ -99,6 +100,13 @@ class unitpay {
 		'6', '1', 'zen_cfg_select_option(array(\'True\', \'False\'), ', now())");
 
 		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values (
+		    '".MODULE_PAYMENT_UNITPAY_DOMAIN_TITLE."', 
+		    'MODULE_PAYMENT_UNITPAY_DOMAIN', 
+		    '', 
+		    '', 
+		    '6', '0', now())"
+		);
+		$db->Execute("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values (
             '".MODULE_PAYMENT_UNITPAY_PUBLIC_KEY_TITLE."', 
             'MODULE_PAYMENT_UNITPAY_PUBLIC_KEY', 
             '', 
@@ -143,6 +151,7 @@ class unitpay {
 	{
 		return array(
 			'MODULE_PAYMENT_UNITPAY_ENABLE',
+            		'MODULE_PAYMENT_UNITPAY_DOMAIN',
 			'MODULE_PAYMENT_UNITPAY_PUBLIC_KEY',
 			'MODULE_PAYMENT_UNITPAY_SECRET_KEY',
 			'MODULE_PAYMENT_UNITPAY_SORT_ORDER',
